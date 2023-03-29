@@ -2,24 +2,31 @@ import React, { useEffect, useState } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import { Link } from 'react-router-dom';
-import BulbasaurPic from '../assets/bulbasaur.gif';
 import styles from './pokemons.module.css';
 import { fetchPokemons } from '../api/fetchPokemons';
 import { Pokemon } from '../types/type';
+import LoadingScreen from '../components/LoadingScreen';
+import { waitFor } from '../utils/Utils';
 
 const Pokemons = () => {
+const [isLoading, setIsLoading] = useState(false);
 const [query, setQuery] = useState("");
 const [pokemons, setPokemons] = useState<Pokemon[]>([]);
 
 useEffect(() => {
   const fetchAllPokemons = async () => {
+    setIsLoading(true);
+    await waitFor(1500);
     const allPokemons = await fetchPokemons();
     setPokemons(allPokemons);
+    setIsLoading(false);
   };
   fetchAllPokemons();
 }, []);
 
-
+if (isLoading || !pokemons){
+  return <LoadingScreen />;
+}
 
 
   return (
